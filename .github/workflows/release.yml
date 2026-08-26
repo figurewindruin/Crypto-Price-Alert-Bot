@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore Crypto-Price-Alert-Bot.sln
+      - name: Build
+        run: dotnet build Crypto-Price-Alert-Bot.sln --configuration Release --no-restore
+      - name: Test
+        run: dotnet test Crypto-Price-Alert-Bot.sln --no-build --configuration Release
+      - name: Publish
+        run: dotnet publish src/Crypto-Price-Alert-Bot/Crypto-Price-Alert-Bot.csproj --configuration Release --no-build --output ./artifacts
